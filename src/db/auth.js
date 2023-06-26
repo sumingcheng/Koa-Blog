@@ -1,5 +1,6 @@
 const MySQL = require('./index');
 const PasswordManager = require('../utils/index');
+const {logger} = require('../middleware/logger');
 
 // 添加用户
 const addUser = async (userInfo) => {
@@ -12,33 +13,33 @@ const addUser = async (userInfo) => {
     const [rows] = await MySQL.execute(sql, [username, hashedPassword, email, role]);
     return rows;
   } catch (err) {
-    console.log(err);
+    logger.error(err);
     throw err;
   }
 };
 
 // 删除用户
-const deleteUser = async (id) => {
-  const sql = `DELETE FROM user WHERE id = ?`;
+const deleteUser = async (username) => {
+  const sql = `DELETE FROM user WHERE username = ?`;
   try {
-    const [rows] = await MySQL.execute(sql, [id]);
+    const [rows] = await MySQL.execute(sql, [username]);
     return rows;
   } catch (err) {
-    console.log(err);
+    logger.error(err);
     throw err;
   }
 }
 
 // 更新用户
 const updateUser = async (userInfo) => {
-  const {id, username, email, password, role} = userInfo;
-  const sql = `UPDATE user SET username = ?, email = ?, password = ?, role = ? WHERE id = ?`;
+  const {username, email, password, role} = userInfo;
+  const sql = `UPDATE user SET username = ?, email = ?, password = ?, role = ? WHERE username = ?`;
   const hashedPassword = await PasswordManager.hashPassword(password);
   try {
-    const [rows] = await MySQL.execute(sql, [username, email, hashedPassword, role, id]);
+    const [rows] = await MySQL.execute(sql, [username, email, hashedPassword, role, username]);
     return rows;
   } catch (err) {
-    console.log(err);
+    logger.error(err);
     throw err;
   }
 }
@@ -55,9 +56,18 @@ const getUser = async (username) => {
   }
 }
 
-getUser('root').then(res => {
-  console.log(res);
-})
+// deleteUser('test');
+
+// getUser('root').then(res => {
+//   console.log(res);
+// })
+
+// updateUser({
+//   username: 'test',
+//   email: 'test@qq.com',
+//   password: '123456',
+//   role: 'admin'
+// })
 
 // const result = addUser({
 //   username: 'root',
