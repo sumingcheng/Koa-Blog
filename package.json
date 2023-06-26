@@ -1,0 +1,27 @@
+{
+  "name": "koa-blog",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "dev": "cross-env NODE_ENV=development nodemon src/app.js",
+    "prod": "cross-env NODE_ENV=production nodemon src/app.js",
+    "build": "cross-env NODE_ENV=production esbuild src/app.js --bundle --minify --outfile=dist/server.js --platform=node"
+  },
+  "keywords": [],
+  "author": "sumingcheng",
+  "license": "ISC",
+  "dependencies": {
+    "chalk": "4",
+    "koa": "^2.14.2",
+    "koa-router": "^12.0.0",
+    "nodemon": "^2.0.22",
+    "winston": "^3.9.0",
+    "dotenv": "^16.3.1"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "esbuild": "^0.18.2",
+    "prettier": "^2.8.8"
+  }
+}
