@@ -1,19 +1,48 @@
-// routes/auth.js
-
+const {addUser, deleteUser, updateUser, getUser} = require('../db/auth');
 const Router = require('koa-router');
 const router = new Router();
 
-// 定义认证相关的路由
-router.get('/users', async (ctx) => {
-  try {
-    const query = 'SELECT * FROM users';
-    // 执行数据库查询
-    ctx.body = await ctx.db.query(query);  // 将查询结果作为响应发送回客户端
-  } catch (err) {
-    console.error('Error executing MySQL query: ' + err);
-    ctx.status = 500;  // 设置错误状态码
-    ctx.body = 'An error occurred';
+// 获取用户
+router.get('/getUser', async (ctx) => {
+  const {username} = ctx.query;
+  const data = await getUser(username);
+  ctx.body = {
+    code: 0,
+    msg: '获取用户成功',
+    data
   }
-});
+})
+
+// 注销用户
+router.post('/deleteUser', async (ctx) => {
+  console.log(ctx.request.body)
+  const {username} = ctx.request.body;
+  const data = await deleteUser(username);
+  ctx.body = {
+    code: 0,
+    msg: data ? '注销用户成功' : '注销用户失败',
+    data
+  }
+})
+
+// 添加用户
+router.post('/addUser', async (ctx) => {
+  const {username, email, password, role} = ctx.request.body;
+  const data = await addUser({username, email, password, role});
+  ctx.body = {
+    code: 0,
+    msg: data ? '添加用户成功' : '添加用户失败'
+  }
+})
+
+// 更新用户
+router.post('/updateUser', async (ctx) => {
+  const {username, email, password, role} = ctx.request.body;
+  const data = await updateUser({username, email, password, role});
+  ctx.body = {
+    code: 0,
+    msg: data ? '更新用户成功' : '更新用户失败'
+  }
+})
 
 module.exports = router;

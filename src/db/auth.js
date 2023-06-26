@@ -11,6 +11,12 @@ const addUser = async (userInfo) => {
   const hashedPassword = await PasswordManager.hashPassword(password);
   try {
     const [rows] = await MySQL.execute(sql, [username, hashedPassword, email, role]);
+    if (rows.affectedRows === 0) {
+      logger.info(`用户${username}添加失败`);
+      return null;
+    } else {
+      logger.info(`用户${username}添加成功`);
+    }
     return rows;
   } catch (err) {
     logger.error(err);
@@ -22,7 +28,14 @@ const addUser = async (userInfo) => {
 const deleteUser = async (username) => {
   const sql = `DELETE FROM user WHERE username = ?`;
   try {
-    const [rows] = await MySQL.execute(sql, [username]);
+    const [rows] = await MySQL.execute(sql, [username || null]);
+    // 受影响的行数
+    if (rows.affectedRows === 0) {
+      logger.info(`用户${username}删除失败`);
+      return null;
+    } else {
+      logger.info(`用户${username}删除成功`);
+    }
     return rows;
   } catch (err) {
     logger.error(err);
@@ -37,6 +50,12 @@ const updateUser = async (userInfo) => {
   const hashedPassword = await PasswordManager.hashPassword(password);
   try {
     const [rows] = await MySQL.execute(sql, [username, email, hashedPassword, role, username]);
+    if (rows.affectedRows === 0) {
+      logger.info(`用户${username}更新失败`);
+      return null;
+    } else {
+      logger.info(`用户${username}更新成功`);
+    }
     return rows;
   } catch (err) {
     logger.error(err);
@@ -49,6 +68,12 @@ const getUser = async (username) => {
   const sql = `SELECT * FROM user WHERE username = ?`;
   try {
     const [rows] = await MySQL.execute(sql, [username]);
+    if (rows.affectedRows === 0) {
+      logger.info(`用户${username}获取失败`);
+      return null;
+    } else {
+      logger.info(`用户${username}获取成功`);
+    }
     return rows;
   } catch (err) {
     console.log(err);
@@ -77,6 +102,9 @@ const getUser = async (username) => {
 // });
 
 module.exports = {
-  addUser, deleteUser, updateUser
+  addUser,
+  deleteUser,
+  updateUser,
+  getUser
 }
 
