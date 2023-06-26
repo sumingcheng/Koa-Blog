@@ -38,10 +38,11 @@ router.post('/addUser', async (ctx) => {
 // 更新用户
 router.post('/updateUser', async (ctx) => {
   const {username, email, password, role} = ctx.request.body;
-  const data = await updateUser({username, email, password, role});
+  const getId = await getUser(username);
+  const data = await updateUser({username, email, password, role, id: getId[0].id});
   ctx.body = {
     code: 0,
-    msg: data ? '更新用户成功' : '更新用户失败'
+    msg: data ? '更新用户成功' : '更新用户失败',
   }
 })
 

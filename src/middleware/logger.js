@@ -29,19 +29,18 @@ function koaLogger () {
     let logLevel;
     if (ctx.status >= 500) {
       logLevel = "error";
-    }
-    if (ctx.status >= 400) {
+    } else if (ctx.status >= 400) {
       logLevel = "warn";
-    }
-    if (ctx.status >= 100) {
+    } else if (ctx.status >= 100) {
       logLevel = "info";
     }
 
-    let msg =
-        `${ctx.method} ${ctx.originalUrl}` +
-        chalk[STATUS_COLORS[logLevel]](` ${ctx.status} `) +
-        `${ms}ms`;
+    let msg = `${ctx.method} ${ctx.originalUrl}`;
 
+    if (ctx.method === "POST") {
+      msg += ` Body: ${JSON.stringify(ctx.request.body, null, 2)}`;
+    }
+    msg += chalk[STATUS_COLORS[logLevel]](` ${ctx.status} ${ms}ms`);
     logger.log(logLevel, msg);
   };
 }

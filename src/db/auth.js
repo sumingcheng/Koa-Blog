@@ -12,7 +12,7 @@ const addUser = async (userInfo) => {
   try {
     const [rows] = await MySQL.execute(sql, [username, hashedPassword, email, role]);
     if (rows.affectedRows === 0) {
-      logger.info(`用户${username}添加失败`);
+      logger.error(`用户${username}添加失败`);
       return null;
     } else {
       logger.info(`用户${username}添加成功`);
@@ -31,7 +31,7 @@ const deleteUser = async (username) => {
     const [rows] = await MySQL.execute(sql, [username || null]);
     // 受影响的行数
     if (rows.affectedRows === 0) {
-      logger.info(`用户${username}删除失败`);
+      logger.error(`用户${username}删除失败`);
       return null;
     } else {
       logger.info(`用户${username}删除成功`);
@@ -45,13 +45,13 @@ const deleteUser = async (username) => {
 
 // 更新用户
 const updateUser = async (userInfo) => {
-  const {username, email, password, role} = userInfo;
-  const sql = `UPDATE user SET username = ?, email = ?, password = ?, role = ? WHERE username = ?`;
+  const {username, email, password, role, id} = userInfo;
+  const sql = `UPDATE user SET username = ?, email = ?, password = ?, role = ? WHERE id = ?`;
   const hashedPassword = await PasswordManager.hashPassword(password);
   try {
-    const [rows] = await MySQL.execute(sql, [username, email, hashedPassword, role, username]);
+    const [rows] = await MySQL.execute(sql, [username, email, hashedPassword, role, id]);
     if (rows.affectedRows === 0) {
-      logger.info(`用户${username}更新失败`);
+      logger.error(`用户${username}更新失败`);
       return null;
     } else {
       logger.info(`用户${username}更新成功`);
@@ -61,7 +61,7 @@ const updateUser = async (userInfo) => {
     logger.error(err);
     throw err;
   }
-}
+};
 
 // 获取用户
 const getUser = async (username) => {
@@ -69,7 +69,7 @@ const getUser = async (username) => {
   try {
     const [rows] = await MySQL.execute(sql, [username]);
     if (rows.affectedRows === 0) {
-      logger.info(`用户${username}获取失败`);
+      logger.error(`用户${username}获取失败`);
       return null;
     } else {
       logger.info(`用户${username}获取成功`);
@@ -88,7 +88,8 @@ const getUser = async (username) => {
 // })
 
 // updateUser({
-//   username: 'test',
+//   id: 5,
+//   username: '寿喜烧',
 //   email: 'test@qq.com',
 //   password: '123456',
 //   role: 'admin'
