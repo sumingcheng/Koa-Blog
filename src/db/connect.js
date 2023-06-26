@@ -5,7 +5,13 @@ const pool = mysql.createPool({
   host: 'localhost',
   user: 'root',
   database: 'blog',
-  password: '123456'
+  password: '123456',
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0,
+  idleTimeout: 60000,
+  enableKeepAlive: true,
+  keepAliveInitialDelay: 0
 });
 
-module.exports = pool
+module.exports = pool;

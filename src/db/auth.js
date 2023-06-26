@@ -1,16 +1,13 @@
-// 创建一个 async 函数来执行查询
-const MySQL = require('./connect');
+const MySQL = require('./index');
 
-async function query () {
-  const conn = await MySQL.getConnection();
+// 使用查询函数
+async function main () {
   try {
-    const results = await conn.query("SELECT * FROM user");
-    console.log(results);
+    const [rows, fields] = await MySQL.execute('SELECT * FROM `user`')
+    console.log(rows);
   } catch (error) {
-    console.log(error);
-  } finally {
-    conn.release();
+    console.error(error);
   }
 }
 
-query();
+main().catch(console.error)
