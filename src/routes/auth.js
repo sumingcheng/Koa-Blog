@@ -1,6 +1,7 @@
 const {addUser, deleteUser, updateUser, getUser} = require('../db/auth');
 const Router = require('koa-router');
 const router = new Router();
+const {validateUserMiddleware} = require('../middleware/validateUserMiddleware');
 
 // 获取用户
 router.get('/getUser', async (ctx) => {
@@ -36,7 +37,7 @@ router.post('/addUser', async (ctx) => {
 })
 
 // 更新用户
-router.post('/updateUser', async (ctx) => {
+router.post('/updateUser', validateUserMiddleware(), async (ctx) => {
   const {username, email, password, role} = ctx.request.body;
   const getId = await getUser(username);
   const data = await updateUser({username, email, password, role, id: getId[0].id});
@@ -45,5 +46,6 @@ router.post('/updateUser', async (ctx) => {
     msg: data ? '更新用户成功' : '更新用户失败',
   }
 })
+
 
 module.exports = router;
