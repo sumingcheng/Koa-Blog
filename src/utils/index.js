@@ -6,7 +6,7 @@ class PasswordManager {
   static saltRounds = 10;
 
   // 加密密码
-  static async hashPassword (password) {
+  static async hashPassword(password) {
     try {
       return await bcrypt.hash(password, this.saltRounds);
     } catch (err) {
@@ -16,7 +16,7 @@ class PasswordManager {
   }
 
   // 验证密码
-  static async comparePassword (password, hash) {
+  static async comparePassword(password, hash) {
     try {
       return await bcrypt.compare(password, hash);
     } catch (err) {

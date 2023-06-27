@@ -67,16 +67,35 @@ const updateUser = async (userInfo) => {
 const getUser = async (username) => {
   const sql = `SELECT * FROM user WHERE username = ?`;
   try {
-    const [rows] = await MySQL.execute(sql, [username]);
-    if (rows.affectedRows === 0) {
+    const [rows] = await MySQL.execute(sql, [username || null]);
+    if (!username || rows.affectedRows === 0) {
       logger.error(`用户${username}获取失败`);
       return null;
     } else {
       logger.info(`用户${username}获取成功`);
+      return rows;
     }
-    return rows;
   } catch (err) {
     console.log(err);
+    throw err;
+  }
+}
+
+const changePassword = async (userInfo) => {
+  const {username, password, id} = userInfo;
+  const sql = `UPDATE user SET password = ? WHERE id = ?`;
+  const hashedPassword = await PasswordManager.hashPassword(password);
+  try {
+    const [rows] = await MySQL.execute(sql, [hashedPassword, id]);
+    if (rows.affectedRows === 0) {
+      logger.error(`用户${username}密码修改失败`);
+      return false;
+    } else {
+      logger.info(`用户${username}密码修改成功`);
+      return true;
+    }
+  } catch (err) {
+    logger.error(err);
     throw err;
   }
 }
@@ -106,6 +125,7 @@ module.exports = {
   addUser,
   deleteUser,
   updateUser,
-  getUser
+  getUser,
+  changePassword
 }
 

@@ -1,7 +1,8 @@
-const {addUser, deleteUser, updateUser, getUser} = require('../db/auth');
+const {addUser, deleteUser, updateUser, getUser, changePassword} = require('../db/auth');
 const Router = require('koa-router');
 const router = new Router();
 const {validateUserMiddleware} = require('../middleware/validateUserMiddleware');
+const PasswordManager = require('../utils/index');
 
 // 获取用户
 router.get('/getUser', async (ctx) => {
@@ -27,7 +28,7 @@ router.post('/deleteUser', async (ctx) => {
 })
 
 // 添加用户
-router.post('/addUser', async (ctx) => {
+router.post('/addUser', validateUserMiddleware(), async (ctx) => {
   const {username, email, password, role} = ctx.request.body;
   const data = await addUser({username, email, password, role});
   ctx.body = {
@@ -44,6 +45,26 @@ router.post('/updateUser', validateUserMiddleware(), async (ctx) => {
   ctx.body = {
     code: 0,
     msg: data ? '更新用户成功' : '更新用户失败',
+  }
+})
+
+// 修改密码
+router.post('/updatePassword', async (ctx) => {
+  const {username, oldPassword, password} = ctx.request.body;
+  const data = await getUser(username);
+  const verify = await PasswordManager.comparePassword(oldPassword, data[0].password);
+  if (verify) {
+    const update = await changePassword({username, password, id: data[0].id});
+    console.log(update, "#######")
+    ctx.body = {
+      code: 0,
+      msg: update ? '修改密码成功' : '修改密码失败',
+    }
+  } else {
+    ctx.body = {
+      code: 1,
+      msg: '原密码错误'
+    }
   }
 })
 
