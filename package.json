@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "cross-env NODE_ENV=development nodemon src/app.js",
     "prod": "cross-env NODE_ENV=production nodemon src/app.js",
-    "build": "cross-env NODE_ENV=production esbuild src/app.js --bundle --minify --outfile=dist/server.js --platform=node"
+    "build": "cross-env NODE_ENV=production esbuild src/app.js --bundle --minify --outfile=dist/server.js --platform=node",
+    "doc": "jsdoc ./src/routes -d ./docs"
   },
   "keywords": [],
   "author": "sumingcheng",

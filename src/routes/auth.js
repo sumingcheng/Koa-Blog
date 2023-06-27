@@ -55,7 +55,6 @@ router.post('/updatePassword', async (ctx) => {
   const verify = await PasswordManager.comparePassword(oldPassword, data[0].password);
   if (verify) {
     const update = await changePassword({username, password, id: data[0].id});
-    console.log(update, "#######")
     ctx.body = {
       code: 0,
       msg: update ? '修改密码成功' : '修改密码失败',
