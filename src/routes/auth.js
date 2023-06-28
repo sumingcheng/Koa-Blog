@@ -7,7 +7,7 @@ const {verifyToken} = require('../middleware/verifyToken');
 
 // 获取用户
 router.get('/getUser', verifyToken, async (ctx) => {
-  const {username} = ctx.state.user;
+  const {username} = ctx.state.userInfo;
   const data = await getUser(username);
   ctx.body = {
     code: 0,
@@ -18,7 +18,7 @@ router.get('/getUser', verifyToken, async (ctx) => {
 
 // 注销用户
 router.post('/deleteUser', verifyToken, async (ctx) => {
-  const {username} = ctx.state.user;
+  const {username} = ctx.state.userInfo;
   const data = await deleteUser(username);
   ctx.body = {
     code: 0,
@@ -40,7 +40,7 @@ router.post('/addUser', validateUser(), async (ctx) => {
 // 更新用户
 router.post('/updateUser', verifyToken, validateUser(), async (ctx) => {
   const {email, password, role} = ctx.request.body;
-  const {username} = ctx.state.user;
+  const {username} = ctx.state.userInfo;
   const getId = await getUser(username);
   const data = await updateUser({username, email, password, role, id: getId[0].id});
   ctx.body = {

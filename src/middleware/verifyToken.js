@@ -13,7 +13,14 @@ async function verifyToken(ctx, next) {
   }
 
   try {
-    ctx.state.user = jwt.verify(accesstoken, SECRET_KEY);
+    // userInfo:{
+    //   username: 'admin',
+    //       id: 23,
+    //     role: 'ADMIN',
+    //     iat: 1687917463,
+    //     exp: 1687924663
+    // }
+    ctx.state.userInfo = jwt.verify(accesstoken, SECRET_KEY);
     await next();
   } catch (err) {
     ctx.throw(401, 'accessToken 无效');
