@@ -32,10 +32,14 @@ router.post('/login', async (ctx) => {
 
     if (verify) {
       let accessToken = generateAToken(data[0].id, data[0].username, data[0].role)
+      ctx.cookies.set('access_token', accessToken, {
+        httpOnly: true,  // httpOnly 设置为 true 可以防止 JavaScript 访问此 cookie
+        maxAge: 1000 * 60 * 60 * 2, // 过期时间
+        // secure: true,  // 如果你的网站是 HTTPS，那么应该将 secure 设置为 true
+      });
       ctx.body = {
         code: 0,
         msg: '登录成功',
-        accessToken
       };
     } else {
       ctx.body = {
@@ -52,6 +56,7 @@ router.post('/login', async (ctx) => {
     };
   }
 });
+
 
 
 module.exports = router;

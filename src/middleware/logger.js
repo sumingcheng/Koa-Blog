@@ -11,7 +11,11 @@ const logger = winston.createLogger({
   level: "info",
   format: winston.format.combine(
       winston.format.splat(),
-      winston.format.timestamp(),
+      winston.format.timestamp({
+        format: () => {
+          return new Date().toLocaleString();  // 使用本地时区
+        }
+      }),
       winston.format.cli(),
       winston.format.printf((info) => {
         return `${info.timestamp} ${info.level}: ${info.message}`;
@@ -20,7 +24,7 @@ const logger = winston.createLogger({
   transports: [new winston.transports.Console()],
 });
 
-function koaLogger () {
+function koaLogger() {
   return async (ctx, next) => {
     const start = new Date();
     await next();
