@@ -12,9 +12,7 @@ function generateAToken(id, username, role) {
   };
 
   // 生成 token
-  const token = jwt.sign(payload, SECRET_KEY, {expiresIn: '2h'});
-  console.log(token)
-  return token;
+  return jwt.sign(payload, SECRET_KEY, {expiresIn: '2h'});
 }
 
 module.exports = {

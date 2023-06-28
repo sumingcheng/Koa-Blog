@@ -1,7 +1,7 @@
 const {logger} = require("./logger");
 const {validRoles} = require("../dictionary");
 
-function validateUserMiddleware() {
+function validateUser() {
   return async (ctx, next) => {
     const {username, email, password, role} = ctx.request.body;
 
@@ -41,5 +41,5 @@ function validateUserMiddleware() {
 
 
 module.exports = {
-  validateUserMiddleware
+  validateUser
 }

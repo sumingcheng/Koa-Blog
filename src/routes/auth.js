@@ -1,12 +1,13 @@
 const {addUser, deleteUser, updateUser, getUser, changePassword} = require('../db/auth');
 const Router = require('koa-router');
 const router = new Router();
-const {validateUserMiddleware} = require('../middleware/validateUserMiddleware');
+const {validateUser} = require('../middleware/validateUser');
 const PasswordManager = require('../utils/index');
+const {verifyToken} = require('../middleware/verifyToken');
 
 // 获取用户
-router.get('/getUser', async (ctx) => {
-  const {username} = ctx.query;
+router.get('/getUser', verifyToken, async (ctx) => {
+  const {username} = ctx.state.user;
   const data = await getUser(username);
   ctx.body = {
     code: 0,
@@ -16,9 +17,8 @@ router.get('/getUser', async (ctx) => {
 })
 
 // 注销用户
-router.post('/deleteUser', async (ctx) => {
-  console.log(ctx.request.body)
-  const {username} = ctx.request.body;
+router.post('/deleteUser', verifyToken, async (ctx) => {
+  const {username} = ctx.state.user;
   const data = await deleteUser(username);
   ctx.body = {
     code: 0,
@@ -28,7 +28,7 @@ router.post('/deleteUser', async (ctx) => {
 })
 
 // 添加用户
-router.post('/addUser', validateUserMiddleware(), async (ctx) => {
+router.post('/addUser', validateUser(), async (ctx) => {
   const {username, email, password, role} = ctx.request.body;
   const data = await addUser({username, email, password, role});
   ctx.body = {
@@ -38,8 +38,9 @@ router.post('/addUser', validateUserMiddleware(), async (ctx) => {
 })
 
 // 更新用户
-router.post('/updateUser', validateUserMiddleware(), async (ctx) => {
-  const {username, email, password, role} = ctx.request.body;
+router.post('/updateUser', verifyToken, validateUser(), async (ctx) => {
+  const {email, password, role} = ctx.request.body;
+  const {username} = ctx.state.user;
   const getId = await getUser(username);
   const data = await updateUser({username, email, password, role, id: getId[0].id});
   ctx.body = {
